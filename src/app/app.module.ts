@@ -77,6 +77,7 @@ import { AchievementCardComponent } from './card/achievement-card/achievement-ca
 import { AchievementOfferMakeComponent } from './page/achievements/achievement-offer-make/achievement-offer-make.component';
 import { SkillsNewComponent } from './page/achievements/skills-new/skills-new.component';
 import { QrScanComponent } from './page/qr-scan/qr-scan.component';
+import { PolyHedronComponent } from './page/poly-hedron/poly-hedron.component';
 
 @NgModule({
   declarations: [
@@ -123,6 +124,7 @@ import { QrScanComponent } from './page/qr-scan/qr-scan.component';
     OTPComponent,
     QuerySearchComponent,
     QueryNewComponent,
+    PolyHedronComponent,
   ],
   imports: [
     BrowserModule,
@@ -147,6 +149,8 @@ import { QrScanComponent } from './page/qr-scan/qr-scan.component';
 
       { path: 'map', component: MapComponent, data: { state: 'base' } },
       { path: 'map/:name', component: MapComponent, data: { state: 'base' } },
+
+      { path: '3dmap', component: PolyHedronComponent, data: { state: 'base' } },
 
       { path: 'achievements', component: AchievementsComponent, data: { state: 'base' }, canActivate: [LoginActivate] },
       { path: 'achievements/:body', component: AchievementsComponent, data: { state: 'base' }, canActivate: [LoginActivate] },

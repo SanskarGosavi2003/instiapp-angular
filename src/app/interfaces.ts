@@ -228,3 +228,11 @@ export interface IOfferedAchievement {
     users: IUserProfile[];
     stat: number;
 }
+
+export interface I3dmap {
+    id: string;
+    vertices: number[];
+    indices: number[];
+    radius: number;
+    details: number;
+}

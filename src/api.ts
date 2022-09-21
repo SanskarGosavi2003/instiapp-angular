@@ -60,4 +60,6 @@ export const API = {
     Interest: 'api/interests',
     DelInterest: 'api/interests/{id}',
     external: 'api/external-blog{?from,num,query}',
+
+    i3dcomp: 'api/polyhedrons',
 };

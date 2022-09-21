@@ -1,5 +1,8 @@
 import { AfterViewInit, Component, OnInit, ElementRef, Input, ViewChild } from '@angular/core';
+import { I3dmap } from '../../interfaces';
+import { DataService } from '../../data.service';
 import * as THREE from 'three';
+import { API } from '../../../api';
 
 
 @Component({
@@ -21,8 +24,6 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
   @Input() public fieldOfView: number = 1;
   @Input('nearClipping') public nearClippingPlane: number = 1;//we can use this neaClippingplane and farClippingPlane to render properly only the buildings we need in our view so easier on less powerful devices 
   @Input('farClipping') public farClippingPlane: number = 1000;
-  
-
   
 
   private camera!: THREE.PerspectiveCamera;
@@ -48,19 +49,28 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
 
   const geometry = new THREE.PolyhedronGeometry( verticesOfCube, indicesOfFaces, 6, 2 );
   */
-  verticesOfCube: number[] = [
-    -1,-1,-1,    1,-1,-1,    1, 1,-1,    -1, 1,-1,
-    -1,-1, 1,    1,-1, 1,    1, 1, 1,    -1, 1, 1,
-  ];
+  // verticesOfCube: number[] = [
+  //   -1,-1,-1,    1,-1,-1,    1, 1,-1,    -1, 1,-1,
+  //   -1,-1, 1,    1,-1, 1,    1, 1, 1,    -1, 1, 1,
+  // ];
+  verticesOfCube: number[]=[];
 
-  indicesOfFaces: number[] = [
-      2,1,0,    0,3,2,
-      0,4,7,    7,3,0,
-      0,1,5,    5,4,0,
-      1,2,6,    6,5,1,
-      2,3,7,    7,6,2,
-      4,5,6,    6,7,4
-  ];
+  indicesOfFaces: number[] = [];
+  
+
+  radius: number;
+  details: number; 
+
+  
+
+  // indicesOfFaces: number[] = [
+  //     2,1,0,    0,3,2,
+  //     0,4,7,    7,3,0,
+  //     0,1,5,    5,4,0,
+  //     1,2,6,    6,5,1,
+  //     2,3,7,    7,6,2,
+  //     4,5,6,    6,7,4
+  // ];
   private geometry = new THREE.PolyhedronGeometry( this.verticesOfCube, this.indicesOfFaces, 1, 0 );
   private material = new THREE.MeshBasicMaterial({ map: this.loader.load(this.texture) });
 
@@ -129,9 +139,21 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
     }());
   }
 
-  constructor() { }
+  constructor(
+    public dataService: DataService,
+  ) { }
 
   ngOnInit(): void {
+    
+  }
+
+  update(){
+    this.dataService.FireGET<I3dmap>(API.i3dcomp).subscribe(result =>{
+      this.verticesOfCube = result.vertices,
+      this.indicesOfFaces = result.indices,
+      this.radius = result.radius,
+      this.details = result.details
+    })
   }
 
   ngAfterViewInit(){

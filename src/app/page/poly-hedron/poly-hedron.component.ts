@@ -53,13 +53,13 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
   //   -1,-1,-1,    1,-1,-1,    1, 1,-1,    -1, 1,-1,
   //   -1,-1, 1,    1,-1, 1,    1, 1, 1,    -1, 1, 1,
   // ];
-  verticesOfCube: number[]=[];
+  verticesOfCube: any[]=[];
 
-  indicesOfFaces: number[] = [];
+  indicesOfFaces: any[] = [];
   
 
-  radius: number;
-  details: number; 
+  radius: number = 1;
+  details: number = 0; 
 
   
 
@@ -71,7 +71,7 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
   //     2,3,7,    7,6,2,
   //     4,5,6,    6,7,4
   // ];
-  private geometry = new THREE.PolyhedronGeometry( this.verticesOfCube, this.indicesOfFaces, 1, 0 );
+  private geometry = new THREE.PolyhedronGeometry( this.verticesOfCube, this.indicesOfFaces, this.radius, this.details );
   private material = new THREE.MeshBasicMaterial({ map: this.loader.load(this.texture) });
 
   private cube: THREE.Mesh = new THREE.Mesh(this.geometry, this.material);
@@ -153,7 +153,8 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
       this.indicesOfFaces = result.indices,
       this.radius = result.radius,
       this.details = result.details
-    })
+    });
+    console.log(this.verticesOfCube);
   }
 
   ngAfterViewInit(){

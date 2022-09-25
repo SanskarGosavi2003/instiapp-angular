@@ -25,6 +25,19 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
   @Input('nearClipping') public nearClippingPlane: number = 1;//we can use this neaClippingplane and farClippingPlane to render properly only the buildings we need in our view so easier on less powerful devices 
   @Input('farClipping') public farClippingPlane: number = 1000;
   
+  public dbody: I3dmap
+
+  constructor(
+    public dataService: DataService, 
+  ) { }
+
+  ngOnInit(): void {
+    this.dataService.FireGET<any>(API.i3dcomp).subscribe(result =>{
+      this.dbody = result.data
+    });
+  }
+
+
 
   private camera!: THREE.PerspectiveCamera;
 
@@ -53,13 +66,21 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
   //   -1,-1,-1,    1,-1,-1,    1, 1,-1,    -1, 1,-1,
   //   -1,-1, 1,    1,-1, 1,    1, 1, 1,    -1, 1, 1,
   // ];
-  verticesOfCube: any[]=[];
-
-  indicesOfFaces: any[] = [];
-  
-
-  radius: number = 1;
-  details: number = 0; 
+ 
+ vertices : number []=[];
+ indices : number []=[];
+ radius: number = 0;
+ details: number = 0;
+ 
+ update() {
+  this.radius = this.dbody[0].radius;
+  this.details = this.dbody[0].details;
+  this.vertices = this.dbody[0].vertices;
+  this.details = this.dbody[0].details;
+  console.log(this.vertices)
+  this.createScene();
+  this.startRenderingLoop();
+ }
 
   
 
@@ -71,7 +92,7 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
   //     2,3,7,    7,6,2,
   //     4,5,6,    6,7,4
   // ];
-  private geometry = new THREE.PolyhedronGeometry( this.verticesOfCube, this.indicesOfFaces, this.radius, this.details );
+  private geometry = new THREE.PolyhedronGeometry( this.vertices, this.indices, this.radius, this.details );
   private material = new THREE.MeshBasicMaterial({ map: this.loader.load(this.texture) });
 
   private cube: THREE.Mesh = new THREE.Mesh(this.geometry, this.material);
@@ -139,23 +160,7 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
     }());
   }
 
-  constructor(
-    public dataService: DataService,
-  ) { }
 
-  ngOnInit(): void {
-    
-  }
-
-  update(){
-    this.dataService.FireGET<I3dmap>(API.i3dcomp).subscribe(result =>{
-      this.verticesOfCube = result.vertices,
-      this.indicesOfFaces = result.indices,
-      this.radius = result.radius,
-      this.details = result.details
-    });
-    console.log(this.verticesOfCube);
-  }
 
   ngAfterViewInit(){
     this.createScene();

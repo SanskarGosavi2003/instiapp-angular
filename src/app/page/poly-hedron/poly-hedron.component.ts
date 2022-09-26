@@ -31,12 +31,7 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
     public dataService: DataService, 
   ) { }
 
-  ngOnInit(): void {
-    this.dataService.FireGET<any>(API.i3dcomp).subscribe(result =>{
-      this.dbody = result.data
-    });
-  }
-
+ 
 
 
   private camera!: THREE.PerspectiveCamera;
@@ -67,21 +62,51 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
   //   -1,-1, 1,    1,-1, 1,    1, 1, 1,    -1, 1, 1,
   // ];
  
- vertices : number []=[];
- indices : number []=[];
- radius: number = 0;
- details: number = 0;
+
+
+ vertices : number []=[
+  -1,-1,-1,    1,-1,-1,    1, 1,-1,    -1, 1,-1,
+  -1,-1, 1,    1,-1, 1,    1, 1, 1,    -1, 1, 1,
+ ];
+ indices : number []=[
+  2,1,0,    0,3,2,
+  0,4,7,    7,3,0,
+   0,1,5,    5,4,0,
+   1,2,6,    6,5,1,
+   2,3,7,    7,6,2,
+   4,5,6,    6,7,4
+ ];
+ radius: number = 2;
+ details: number = 2;
  
+
+ ngOnInit(): void {
+  this.dataService.FireGET<any>(API.i3dcomp).subscribe(result =>{
+    this.dbody = result.data;
+    console.log(this.radius);
+    console.log(this.details);
+    console.log(this.vertices);
+    console.log(this.indices);
+    this.radius = this.dbody[0].radius;
+    this.details = this.dbody[0].details;
+    this.vertices = this.dbody[0].vertices;
+    this.indices = this.dbody[0].indices;
+    console.log(this.radius);
+    console.log(this.details);
+    console.log(this.vertices);
+    console.log(this.indices);
+    this.geometry = new THREE.PolyhedronGeometry( this.vertices, this.indices, this.radius, this.details );
+    this.material = new THREE.MeshBasicMaterial({ map: this.loader.load(this.texture) });
+    this.cube = new THREE.Mesh(this.geometry, this.material);
+
+  });
+}
+
  update() {
-  this.radius = this.dbody[0].radius;
-  this.details = this.dbody[0].details;
-  this.vertices = this.dbody[0].vertices;
-  this.details = this.dbody[0].details;
-  console.log(this.vertices)
   this.createScene();
   this.startRenderingLoop();
  }
-
+ 
   
 
   // indicesOfFaces: number[] = [
@@ -92,14 +117,17 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
   //     2,3,7,    7,6,2,
   //     4,5,6,    6,7,4
   // ];
-  private geometry = new THREE.PolyhedronGeometry( this.vertices, this.indices, this.radius, this.details );
-  private material = new THREE.MeshBasicMaterial({ map: this.loader.load(this.texture) });
+  
+  private geometry: THREE.PolyhedronGeometry;// = new THREE.PolyhedronGeometry( this.vertices, this.indices, this.radius, this.details );
 
-  private cube: THREE.Mesh = new THREE.Mesh(this.geometry, this.material);
+  private material: THREE.MeshBasicMaterial;// = new THREE.MeshBasicMaterial({ map: this.loader.load(this.texture) });
+
+  private cube: THREE.Mesh;// = new THREE.Mesh(this.geometry, this.material);
 
   private renderer!: THREE.WebGLRenderer;
 
   private scene!: THREE.Scene;
+ 
 
    /** 
   *Create the scene
@@ -163,8 +191,11 @@ export class PolyHedronComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit(){
-    this.createScene();
-    this.startRenderingLoop();
+    this.update();
+    console.log(this.vertices);
+    console.log(this.details);
+    console.log(this.indices);
+    console.log(this.radius);
   }
 
 }
